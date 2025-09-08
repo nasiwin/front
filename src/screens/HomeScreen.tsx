@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { CirclePlus, ShoppingCart, User2, BarChart3, Settings, ScanLine, Search, UtensilsCrossed } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import { CirclePlus, ShoppingCart, User2, BarChart3, ScanLine, Search, UtensilsCrossed } from "lucide-react";
 
 const DIET_BG_DATA_URI = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='360' viewBox='0 0 1600 360'><rect width='100%25' height='100%25' fill='transparent'/><g transform='translate(800,180) scale(1.2,0.8) translate(-800,-180) translate(40,72)'><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,Segoe%20UI,system-ui,Arial,sans-serif' font-size='190' fill='%236B7280' opacity='0.85' letter-spacing='10'>KETO</text></g></svg>";
 
@@ -74,7 +72,6 @@ export default function HomeScreen() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 pb-28">
-      <TopBar diet={diet} />
       <main className="px-4 pt-4 space-y-4 max-w-md mx-auto">
         <DietCard diet={diet} onOpenSettings={() => {}} />
         <div className="grid grid-cols-2 gap-4">
@@ -95,35 +92,6 @@ export default function HomeScreen() {
   );
 }
 
-function TopBar({ diet }: { diet: typeof exampleDiet }) {
-  return (
-    <div className="sticky top-0 z-10 backdrop-blur bg-white/70 border-b">
-      <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-slate-200 grid place-items-center">
-            <User2 className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500">Моя диета</div>
-            <div className="font-semibold leading-tight">{diet.name}</div>
-          </div>
-        </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon"><Settings className="h-5 w-5" /></Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[90vw] max-w-sm">
-            <SheetHeader>
-              <SheetTitle>Настройки</SheetTitle>
-            </SheetHeader>
-            <div className="mt-4 text-sm text-slate-600 space-y-3" />
-          </SheetContent>
-        </Sheet>
-      </div>
-    </div>
-  );
-}
-
 function DietCard({ diet, onOpenSettings }: { diet: typeof exampleDiet; onOpenSettings: () => void }) {
   return (
     <Card className="rounded-2xl overflow-hidden relative shadow-sm cursor-pointer min-h-20" onClick={onOpenSettings}>
@@ -139,34 +107,85 @@ function DietCard({ diet, onOpenSettings }: { diet: typeof exampleDiet; onOpenSe
   );
 }
 
-function StatsRow({ label, value, target }: { label: string; value: number; target: number }) {
-  const p = pct(value, target);
+function StatsCard({ stats: _stats, diet: _diet }: { stats: typeof exampleDayStats; diet: typeof exampleDiet }) {
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-slate-500">{label}</span>
-        <span className="font-medium text-slate-900">{value} / {target}</span>
+    <Card className="rounded-2xl shadow-sm h-64 relative overflow-hidden">
+      <div className="absolute top-4 right-3 text-slate-700">
+        <BarChart3 className="h-6 w-6" />
       </div>
-      <Progress value={p} className="h-1" />
-    </div>
+      <div className="absolute top-3 left-4">
+        <CardTitle className="text-base">Статистика за сегодня</CardTitle>
+      </div>
+      <CardContent className="absolute left-0 right-0 bottom-0 top-10 p-0 flex items-center justify-center">
+        <DonutChart />
+      </CardContent>
+    </Card>
   );
 }
 
-function StatsCard({ stats, diet }: { stats: typeof exampleDayStats; diet: typeof exampleDiet }) {
+function DonutChart() {
+  const size = 108;
+  const strokeWidth = 9;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const segments = [
+    { label: "Белки", color: "#0ea5e9", value: 25 },
+    { label: "Жиры", color: "#10b981", value: 25 },
+    { label: "Углеводы", color: "#f59e0b", value: 25 },
+  ];
+  const [active, setActive] = React.useState<number | null>(null);
+
+  let offsetAcc = 0;
   return (
-    <Card className="rounded-2xl shadow-sm">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
-          <BarChart3 className="h-4 w-4" /> Статистика за сегодня
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1 px-3 pb-3">
-        <StatsRow label="Калории" value={stats.kcal} target={diet.kcalTarget} />
-        <StatsRow label="Белки" value={stats.macros.p} target={diet.macros.p} />
-        <StatsRow label="Жиры" value={stats.macros.f} target={diet.macros.f} />
-        <StatsRow label="Углеводы" value={stats.macros.c} target={diet.macros.c} />
-      </CardContent>
-    </Card>
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="#e5e7eb"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${(1 - 0.75) * circumference} ${circumference}`}
+            strokeDashoffset={0}
+            strokeLinecap="round"
+          />
+          {segments.map((seg, idx) => {
+            const segLen = (seg.value / 100) * circumference;
+            const dashArray = `${segLen} ${circumference}`;
+            const el = (
+              <circle
+                key={idx}
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke={seg.color}
+                strokeWidth={active === idx ? strokeWidth + 2 : strokeWidth}
+                strokeDasharray={dashArray}
+                strokeDashoffset={circumference * 0.25 + offsetAcc}
+                strokeLinecap="round"
+                style={{ cursor: "pointer", transition: "stroke-width 120ms ease" }}
+                onMouseEnter={() => setActive(idx)}
+                onMouseLeave={() => setActive(null)}
+                onClick={() => setActive(active === idx ? null : idx)}
+              />
+            );
+            offsetAcc += segLen;
+            return el;
+          })}
+        </g>
+      </svg>
+      <div className="absolute inset-0 grid place-items-center">
+        <div className="text-center">
+          <div className="text-2xl font-semibold">75%</div>
+          {active !== null ? (
+            <div className="text-xs text-slate-500 mt-1">{segments[active].label}</div>
+          ) : null}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -176,34 +195,16 @@ function FitBadge({ fit }: { fit: "ok" | "warn" | string }) {
   return <Badge variant="secondary">Неизвестно</Badge>;
 }
 
-function BasketCard({ trips, onOpenBasket }: { trips: typeof exampleTrips; onOpenBasket: () => void }) {
+function BasketCard({ trips: _trips, onOpenBasket }: { trips: typeof exampleTrips; onOpenBasket: () => void }) {
   return (
-    <Card className="rounded-2xl shadow-sm cursor-pointer" onClick={onOpenBasket}>
-      <CardHeader className="py-1 px-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <ShoppingCart className="h-4 w-4" /> Корзина на сегодня
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="px-3 pb-3">
-        <div className="space-y-2 max-h-40 overflow-auto">
-          {trips.map(trip => (
-            <div key={trip.id} className="border rounded-lg p-2">
-              <div className="text-xs text-slate-500 mb-1">{trip.title}</div>
-              <div className="space-y-1">
-                {trip.items.map(it => (
-                  <div key={it.id} className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="font-medium truncate">{it.name} ×{it.qty}</div>
-                      <div className="text-xs text-slate-500">{it.kcal} ккал · Б{it.p} Ж{it.f} У{it.c}</div>
-                    </div>
-                    <FitBadge fit={it.fit} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
+    <Card className="rounded-2xl shadow-sm h-64 relative overflow-hidden cursor-pointer" onClick={onOpenBasket}>
+      <div className="absolute top-4 right-3 text-slate-700">
+        <ShoppingCart className="h-6 w-6" />
+      </div>
+      <div className="absolute top-3 left-4">
+        <CardTitle className="text-base leading-tight">Корзина на<br/>сегодня</CardTitle>
+      </div>
+      <CardContent className="absolute left-0 right-0 bottom-0 top-10 px-3 pb-3" />
     </Card>
   );
 }
@@ -275,7 +276,7 @@ function ScannerDialog({ open, onOpenChange, children, onManualSubmit }: { open:
             <div className="p-4 border rounded-xl text-sm text-slate-600">Ваш браузер не поддерживает BarcodeDetector. Введите код вручную ниже.</div>
           )}
           <div className="flex items-center gap-2">
-            <Input placeholder="Введите штрихкод" onKeyDown={(e) => { if ((e as any).key === "Enter") onManualSubmit((e.currentTarget as HTMLInputElement).value); }} />
+            <Input placeholder="Введите штрихкод" onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => { if (e.key === "Enter") onManualSubmit((e.currentTarget as HTMLInputElement).value); }} />
             <Button onClick={() => { const el = document.querySelector("input[placeholder='Введите штрихкод']") as HTMLInputElement | null; if (el) onManualSubmit(el.value); }}>
               <Search className="h-4 w-4 mr-1" /> OK
             </Button>
