@@ -4,9 +4,10 @@ import { Button } from "../components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
-import { CirclePlus, ShoppingCart, User2, BarChart3, ScanLine, Search, UtensilsCrossed } from "lucide-react";
+import { CirclePlus, ShoppingCart, User2, BarChart3, ScanLine, Search, UtensilsCrossed, Crown, Home } from "lucide-react";
 
 const DIET_BG_DATA_URI = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='360' viewBox='0 0 1600 360'><rect width='100%25' height='100%25' fill='transparent'/><g transform='translate(800,180) scale(1.2,0.8) translate(-800,-180) translate(40,72)'><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,Segoe%20UI,system-ui,Arial,sans-serif' font-size='190' fill='%236B7280' opacity='0.85' letter-spacing='10'>KETO</text></g></svg>";
+const DIET_BG_PUBLIC_URL = "/wallpapers/keto_cover_C_center_shift15_saturated_up_salad_3x_vivid.png";
 
 const exampleDiet = {
   id: "keto",
@@ -72,9 +73,10 @@ export default function HomeScreen() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 pb-28">
-      <main className="px-4 pt-4 space-y-4 max-w-md mx-auto">
+      <main className="px-4 pt-4 space-y-9 max-w-md mx-auto">
+        <SubscriptionCard onOpen={() => {}} />
         <DietCard diet={diet} onOpenSettings={() => {}} />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-6">
           <StatsCard stats={stats} diet={diet} />
           <BasketCard trips={trips} onOpenBasket={() => {}} />
         </div>
@@ -93,14 +95,37 @@ export default function HomeScreen() {
 }
 
 function DietCard({ diet, onOpenSettings }: { diet: typeof exampleDiet; onOpenSettings: () => void }) {
+  const [bgSrc, setBgSrc] = React.useState<string>(DIET_BG_PUBLIC_URL);
   return (
     <Card className="rounded-2xl overflow-hidden relative shadow-sm cursor-pointer min-h-20" onClick={onOpenSettings}>
-      <img src={DIET_BG_DATA_URI} alt="KETO background" className="absolute inset-0 w-full h-full object-cover pointer-events-none" />
+      <img
+        src={bgSrc}
+        onError={() => setBgSrc(DIET_BG_DATA_URI)}
+        alt="Diet background"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        style={{ filter: "saturate(1.4) contrast(1.08) brightness(1.05)" }}
+      />
       <CardHeader className="relative z-10 h-20 w-full flex flex-row items-center justify-between pl-4 pr-4">
         <div className="flex flex-col">
           <CardTitle className="text-base">Моя диета</CardTitle>
         </div>
-        <UtensilsCrossed className="h-6 w-6 mr-2" />
+      </CardHeader>
+      <CardContent className="p-0 hidden" />
+    </Card>
+  );
+}
+
+function SubscriptionCard({ onOpen }: { onOpen: () => void }) {
+  return (
+    <Card className="rounded-2xl overflow-hidden relative shadow-sm cursor-pointer min-h-10 text-white mt-[1.125rem]" onClick={onOpen}>
+      <div className="absolute inset-0 bg-black" />
+      <CardHeader className="relative z-10 h-10 w-full flex items-center justify-center">
+        <div className="text-center leading-tight">
+          <div className="text-base text-white">Ваш план: <span className="text-slate-400">free</span></div>
+        </div>
+        <div className="absolute top-2 right-3 text-white">
+          <Crown className="h-5 w-5" />
+        </div>
       </CardHeader>
       <CardContent className="p-0 hidden" />
     </Card>
@@ -111,10 +136,10 @@ function StatsCard({ stats: _stats, diet: _diet }: { stats: typeof exampleDaySta
   return (
     <Card className="rounded-2xl shadow-sm h-64 relative overflow-hidden">
       <div className="absolute top-4 right-3 text-slate-700">
-        <BarChart3 className="h-6 w-6" />
+        <UtensilsCrossed className="h-6 w-6" />
       </div>
       <div className="absolute top-3 left-4">
-        <CardTitle className="text-base">Статистика за сегодня</CardTitle>
+        <CardTitle className="text-base leading-tight">Меню на<br/>сегодня</CardTitle>
       </div>
       <CardContent className="absolute left-0 right-0 bottom-0 top-10 p-0 flex items-center justify-center">
         <DonutChart />
@@ -204,7 +229,30 @@ function BasketCard({ trips: _trips, onOpenBasket }: { trips: typeof exampleTrip
       <div className="absolute top-3 left-4">
         <CardTitle className="text-base leading-tight">Корзина на<br/>сегодня</CardTitle>
       </div>
-      <CardContent className="absolute left-0 right-0 bottom-0 top-10 px-3 pb-3" />
+      <CardContent className="absolute left-0 right-0 bottom-0 top-14 px-3 pb-3">
+        <div className="absolute left-6 right-6 top-3">
+          <div className="h-2 w-full rounded-full overflow-hidden flex">
+            <div className="bg-emerald-500 flex-1" />
+            <div className="bg-amber-500 flex-1" />
+            <div className="bg-red-500 flex-1" />
+          </div>
+          <div className="mt-1 grid grid-cols-3 text-[10px] text-black">
+            <div className="text-center">good</div>
+            <div className="text-center">mayby</div>
+            <div className="text-center">bad</div>
+          </div>
+        </div>
+        <div className="h-full grid place-items-center">
+          <div className="relative w-[108px] h-[108px] rounded-full overflow-hidden">
+            <div className="absolute inset-2">
+              <div className="w-full h-full flex flex-col items-center justify-between leading-none">
+                <div className="text-[56px] font-light text-amber-500 -mt-2" style={{ WebkitTextStroke: "1px #f59e0b" }}>+3</div>
+                <div className="text-[25.6px] text-black">Item</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
     </Card>
   );
 }
@@ -329,11 +377,10 @@ function ScanResultView({ result, diet, onAdd }: { result: any; diet: typeof exa
 function BottomBar() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 border-t bg-white/80 backdrop-blur py-2">
-      <div className="max-w-md mx-auto px-6 grid grid-cols-4 gap-2 text-xs">
-        <NavBtn icon={<ScanLine className="h-5 w-5" />} label="Сканер" active={false} />
-        <NavBtn icon={<ShoppingCart className="h-5 w-5" />} label="Корзина" />
-        <NavBtn icon={<BarChart3 className="h-5 w-5" />} label="Статистика" />
-        <NavBtn icon={<User2 className="h-5 w-5" />} label="Аккаунт" />
+      <div className="max-w-md mx-auto px-6 flex items-center justify-center">
+        <button className="flex flex-col items-center gap-1 px-2 py-1 rounded-lg text-slate-900">
+          <Home className="h-6 w-6" />
+        </button>
       </div>
     </nav>
   );
