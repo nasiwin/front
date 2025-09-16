@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card } from "./ui/card"
-import { Progress } from "./ui/progress"
 import { useState } from "react"
 import { MenuDetailModal } from "./MenuDetailModal"
 
@@ -58,6 +57,22 @@ const categoryColors = {
   fiber: "bg-purple-50 border-purple-200"
 }
 
+// Localized category labels
+const categoryLabels: Record<string, string> = {
+  protein: "белки",
+  fats: "жиры",
+  carbs: "углеводы",
+  fiber: "клетчатка",
+}
+
+// Text color classes for categories
+const categoryTextColors: Record<string, string> = {
+  protein: "text-blue-600",
+  fats: "text-orange-600",
+  carbs: "text-green-600",
+  fiber: "text-purple-600",
+}
+
 export function TodayMenuWidget() {
   const [showMenuDetail, setShowMenuDetail] = useState(false)
 
@@ -76,10 +91,19 @@ export function TodayMenuWidget() {
           {menuItems.map((item) => (
             <div key={item.id} className={`flex flex-col gap-1 p-2 rounded-lg border ${categoryColors[item.category as keyof typeof categoryColors]}`}>
               <div className="flex-1 min-w-0">
-                <div className="flex flex-col mb-1">
-                  <h4 className="text-xs font-medium text-gray-900 truncate">{item.name}</h4>
-                  <span className="text-xs text-gray-500">{item.calories} ккал</span>
-                </div>
+              <div className="flex flex-col mb-1 gap-1">
+                {/* Show category where the dish name was */}
+                <h4
+                  className="text-xs font-medium text-gray-600 truncate self-end text-right"
+                  style={{ fontSize: "11.25px" }}
+                >
+                  {categoryLabels[item.category as keyof typeof categoryLabels]}
+                </h4>
+                {/* Dish name: left-aligned, wraps, no truncation */}
+                <span className="self-start text-left w-full text-black text-xs font-medium whitespace-normal break-words leading-tight my-0.5">
+                  {item.name}
+                </span>
+              </div>
                 
                 <div className="grid grid-cols-2 gap-1 text-xs">
                   <span className="text-blue-600 font-medium">Б: {item.protein}г</span>

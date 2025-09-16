@@ -10,7 +10,18 @@ export function UserProfileWidget() {
 
   return (
     <>
-      <Card className="p-4 bg-white/80 backdrop-blur-sm border-0 shadow-sm">
+      <Card
+        className="p-4 bg-white/80 backdrop-blur-sm border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+        role="button"
+        tabIndex={0}
+        onClick={() => setShowSubscriptionModal(true)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setShowSubscriptionModal(true);
+          }
+        }}
+      >
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12 ring-2 ring-blue-100">
             <AvatarImage src="/api/placeholder/48/48" />
@@ -21,8 +32,7 @@ export function UserProfileWidget() {
             <div className="flex items-center gap-2 mt-1">
               <Badge 
                 variant="secondary" 
-                className="bg-green-100 text-green-700 border-0 rounded-full px-2 py-0.5 cursor-pointer hover:bg-green-200 transition-colors"
-                onClick={() => setShowSubscriptionModal(true)}
+                className="bg-green-100 text-green-700 border-0 rounded-full px-2 py-0.5 hover:bg-green-200 transition-colors"
               >
                 Premium
               </Badge>
