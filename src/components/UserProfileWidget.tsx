@@ -2,11 +2,19 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Card } from "./ui/card"
 import { Badge } from "./ui/badge"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SubscriptionModal } from "./SubscriptionModal"
+import { fetchCurrentDiet } from "../api/diets"
 
 export function UserProfileWidget() {
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
+  const [dietEmoji, setDietEmoji] = useState<string>('🥗')
+
+  useEffect(() => {
+    fetchCurrentDiet()
+      .then((d) => setDietEmoji(d.diet?.emoji || '🥗'))
+      .catch(() => {})
+  }, [])
 
   return (
     <>
@@ -36,7 +44,7 @@ export function UserProfileWidget() {
               >
                 Premium
               </Badge>
-              <span className="text-sm text-gray-500">до 15 янв</span>
+              <span className="text-sm text-gray-500">{dietEmoji}</span>
             </div>
           </div>
         </div>

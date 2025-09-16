@@ -3,64 +3,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog"
 import { Card } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { Check } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { fetchDiets, switchDiet, type DietSummary } from "../api/diets"
 
-const diets = [
-  {
-    id: 1,
-    name: "Средиземноморская",
-    description: "Богата овощами, фруктами, рыбой и оливковым маслом",
-    benefits: "Для здоровья сердца и долголетия",
-    emoji: "🥗",
-    color: "from-blue-50 to-indigo-50",
-    current: true
-  },
-  {
-    id: 2,
-    name: "Кето",
-    description: "Высокое содержание жиров, низкое количество углеводов",
-    benefits: "Для быстрого снижения веса",
-    emoji: "🥑",
-    color: "from-green-50 to-emerald-50",
-    current: false
-  },
-  {
-    id: 3,
-    name: "Веганская",
-    description: "Исключительно растительная пища",
-    benefits: "Для экологии и здоровья",
-    emoji: "🌱",
-    color: "from-green-50 to-lime-50",
-    current: false
-  },
-  {
-    id: 4,
-    name: "Палео",
-    description: "Продукты, доступные в эпоху палеолита",
-    benefits: "Для натурального питания",
-    emoji: "🥩",
-    color: "from-orange-50 to-amber-50",
-    current: false
-  },
-  {
-    id: 5,
-    name: "Интервальное голодание",
-    description: "Чередование периодов еды и голодания",
-    benefits: "Для метаболизма и контроля веса",
-    emoji: "⏰",
-    color: "from-purple-50 to-violet-50",
-    current: false
-  },
-  {
-    id: 6,
-    name: "DASH",
-    description: "Диетический подход к остановке гипертонии",
-    benefits: "Для снижения давления",
-    emoji: "💗",
-    color: "from-pink-50 to-rose-50",
-    current: false
-  }
-]
+const colorMap: Record<string, string> = {
+  emerald: 'from-green-50 to-emerald-50',
+  sky: 'from-sky-50 to-blue-50',
+  rose: 'from-rose-50 to-pink-50',
+}
 
 interface DietSelectionModalProps {
   open: boolean
@@ -68,14 +18,35 @@ interface DietSelectionModalProps {
 }
 
 export function DietSelectionModal({ open, onOpenChange }: DietSelectionModalProps) {
-  const [selectedDiet, setSelectedDiet] = useState(1)
+  const [list, setList] = useState<DietSummary[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedDiet, setSelectedDiet] = useState<string | null>(null)
 
-  const handleDietSelect = (dietId: number) => {
-    setSelectedDiet(dietId)
-    // Здесь можно добавить логику сохранения выбранной диеты
-    setTimeout(() => {
+  useEffect(() => {
+    if (!open) return
+    setLoading(true)
+    setError(null)
+    fetchDiets()
+      .then((items) => {
+        setList(items)
+        const current = items.find((d) => d.isCurrent)
+        setSelectedDiet(current?.id ?? null)
+      })
+      .catch((e) => setError(e.message || 'Ошибка загрузки'))
+      .finally(() => setLoading(false))
+  }, [open])
+
+  const handleDietSelect = async (dietId: string) => {
+    try {
+      setSelectedDiet(dietId)
+      await switchDiet(dietId, null, null)
       onOpenChange(false)
-    }, 500)
+    } catch (e) {
+      // небольшая обратная связь
+      console.error(e)
+      setError('Не удалось применить диету, попробуйте ещё раз')
+    }
   }
 
   return (
@@ -90,10 +61,16 @@ export function DietSelectionModal({ open, onOpenChange }: DietSelectionModalPro
           </DialogHeader>
           
           <div className="space-y-3">
-            {diets.map((diet) => (
+            {loading && (
+              <div className="text-sm text-gray-500 text-center">Загрузка...</div>
+            )}
+            {error && (
+              <div className="text-sm text-red-600 text-center">{error}</div>
+            )}
+            {!loading && !error && list.map((diet) => (
               <Card 
                 key={diet.id}
-                className={`p-4 cursor-pointer transition-all border-0 bg-gradient-to-r ${diet.color} ${
+                className={`p-4 cursor-pointer transition-all border-0 bg-gradient-to-r ${colorMap[diet.accentColor] ?? 'from-gray-50 to-gray-100'} ${
                   selectedDiet === diet.id ? 'ring-2 ring-blue-500 shadow-md' : 'hover:shadow-sm'
                 }`}
                 onClick={() => handleDietSelect(diet.id)}
@@ -111,14 +88,14 @@ export function DietSelectionModal({ open, onOpenChange }: DietSelectionModalPro
                           <Check className="w-4 h-4 text-white" />
                         </div>
                       )}
-                      {diet.current && selectedDiet !== diet.id && (
+                      {diet.isCurrent && selectedDiet !== diet.id && (
                         <Badge className="bg-blue-100 text-blue-700 border-0 rounded-full text-xs">
                           Текущая
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-gray-700 mb-2">{diet.description}</p>
-                    <p className="text-xs text-gray-600">{diet.benefits}</p>
+                    <p className="text-sm text-gray-700 mb-2">{diet.shortDescription}</p>
+                    <p className="text-xs text-gray-600">{diet.benefits?.join(', ')}</p>
                   </div>
                 </div>
               </Card>

@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String     @id @default(cuid())
+  telegramId     String     @unique
+  name           String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  userDiets      UserDiet[]
+}
+
+model Diet {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  name             String
+  shortDescription String
+  longDescription  String
+  emoji            String
+  colorToken       String
+  goalExamples     Json
+  defaultMacros    Json
+  contraindications String?
+  isPopular        Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  userDiets        UserDiet[]
+}
+
+model UserDiet {
+  id              String   @id @default(cuid())
+  userId          String
+  dietId          String
+  goalWeightDelta Float?
+  goalNotes       String?
+  startedAt       DateTime @default(now())
+  expiresAt       DateTime?
+  isActive        Boolean  @default(true)
+  adherenceScore  Int      @default(100)
+
+  user            User     @relation(fields: [userId], references: [id])
+  diet            Diet     @relation(fields: [dietId], references: [id])
+
+  @@index([userId, isActive])
+}
+
+
