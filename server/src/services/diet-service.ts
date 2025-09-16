@@ -1,12 +1,16 @@
 import { prisma } from '../lib/prisma.js'
+import { cache } from '../lib/cache.js'
+import { events } from '../lib/events.js'
 import { GoalCalculator } from './goal-calculator.js'
 
 export class DietService {
   static async listDiets(userId: string) {
-    const [diets, current] = await Promise.all([
-      prisma.diet.findMany({ orderBy: { name: 'asc' } }),
-      prisma.userDiet.findFirst({ where: { userId, isActive: true }, include: { diet: true } }),
-    ])
+    const cacheKey = `diets:v1`
+    const diets = (cache.get<typeof prisma.diet.findMany extends (...args: any) => Promise<infer R> ? R : any>(cacheKey))
+      ?? (await prisma.diet.findMany({ orderBy: { name: 'asc' } }))
+    if (!cache.get(cacheKey)) cache.set(cacheKey, diets)
+
+    const current = await prisma.userDiet.findFirst({ where: { userId, isActive: true }, include: { diet: true } })
     return diets.map((d) => ({
       id: d.id,
       slug: d.slug,
@@ -71,6 +75,9 @@ export class DietService {
         },
         include: { diet: true },
       })
+
+      // событие для последующей генерации меню
+      events.emit('diet.changed', { userId, dietId: diet.id, startedAt: now.toISOString() })
 
       // Возврат сводки
       return {
