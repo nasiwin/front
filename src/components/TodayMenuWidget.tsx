@@ -79,7 +79,7 @@ export function TodayMenuWidget() {
         onClick={() => setShowMenuDetail(true)}
       >
         <div className="flex items-center justify-between mb-1">
-          <h3 className="font-medium text-gray-900">РњРµРЅСЋ РЅР° СЃРµРіРѕРґРЅСЏ</h3>
+          <h3 className="font-medium text-gray-900">Меню на сегодня</h3>
           <div className="flex items-center gap-2">
             <Button
               size="sm"
@@ -88,7 +88,7 @@ export function TodayMenuWidget() {
               className="min-w-[112px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center"
               title="Обновить меню"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4 mr-1.5" />Обновить
             </Button>
             <span className="text-sm text-gray-500">{dateLabel}</span>
           </div>
@@ -146,5 +146,6 @@ export function TodayMenuWidget() {
     </>
   )
 }
+
 
 
