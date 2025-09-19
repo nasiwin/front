@@ -1,6 +1,6 @@
 ﻿import React from 'react'
 import { Card } from "./ui/card"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useRef } from "react"
 import { Button } from "./ui/button"
 import { RefreshCw } from "lucide-react"
 import { MenuDetailModal } from "./MenuDetailModal"
@@ -34,6 +34,8 @@ export function TodayMenuWidget() {
   const [menu, setMenu] = useState<MenuToday | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const titleRef = useRef<HTMLHeadingElement | null>(null)
+  const [titleHeight, setTitleHeight] = useState<number | null>(null)
 
   const load = () => {
     setLoading(true)
@@ -46,6 +48,26 @@ export function TodayMenuWidget() {
 
   useEffect(() => {
     load()
+  }, [])
+
+  // Keep refresh button height equal to title height
+  useEffect(() => {
+    const update = () => {
+      if (titleRef.current) {
+        const h = Math.ceil(titleRef.current.getBoundingClientRect().height)
+        if (!Number.isNaN(h)) setTitleHeight(h)
+      }
+    }
+    update()
+    const ro = (typeof ResizeObserver !== 'undefined') ? new ResizeObserver(update) : null
+    if (ro && titleRef.current) ro.observe(titleRef.current)
+    window.addEventListener('resize', update)
+    const t = setTimeout(update, 50)
+    return () => {
+      if (ro) ro.disconnect()
+      window.removeEventListener('resize', update)
+      clearTimeout(t)
+    }
   }, [])
 
   const handleRefreshMenu = async (e?: React.MouseEvent) => {
@@ -79,13 +101,14 @@ export function TodayMenuWidget() {
         onClick={() => setShowMenuDetail(true)}
       >
         <div className="flex items-center justify-between mb-1">
-          <h3 className="font-medium text-gray-900">Меню на сегодня</h3>
+          <h3 ref={titleRef} className="font-medium text-gray-900">Меню на сегодня</h3>
           <div className="flex items-center gap-2">
             <Button
               size="sm"
               onClick={handleRefreshMenu}
               disabled={loading}
               className="min-w-[96px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center"
+              style={titleHeight ? { height: `${titleHeight}px` } : undefined}
               title="Обновить меню"
             >
               <RefreshCw className="w-4 h-4 mr-1.5" />Обновить
