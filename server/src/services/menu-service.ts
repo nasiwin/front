@@ -28,6 +28,8 @@ export class MenuService {
       date: dayKey.toISOString().slice(0, 10),
       // Backend-provided notice for Telegram WebApp
       disclaimer: 'Это предложения по меню дают предложения, а не описывают вашу реальную дневную диету!',
+      // Override disclaimer text
+      disclaimer: 'Это только предложения по меню для вдохновения, а не описание вашей дневной диеты!',
       items: items.map((i) => ({
         dishId: i.dishId,
         name: i.dish.name,
@@ -119,4 +121,3 @@ export class MenuService {
     return 'bad'
   }
 }
-
