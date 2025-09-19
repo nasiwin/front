@@ -82,11 +82,10 @@ export function TodayMenuWidget() {
           <h3 className="font-medium text-gray-900">Меню на сегодня</h3>
           <div className="flex items-center gap-2">
             <Button
-              variant="secondary"
               size="sm"
               onClick={handleRefreshMenu}
               disabled={loading}
-              className="h-7 px-2 py-1"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
               title="Обновить меню"
             >
               <RefreshCw className="w-4 h-4" />
