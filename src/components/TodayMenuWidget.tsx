@@ -1,6 +1,8 @@
 import React from 'react'
 import { Card } from "./ui/card"
 import { useEffect, useMemo, useState } from "react"
+import { Button } from "./ui/button"
+import { RefreshCw } from "lucide-react"
 import { MenuDetailModal } from "./MenuDetailModal"
 import { fetchMenuToday, regenerateMenuToday, type MenuToday } from "../api/menu"
 
@@ -46,6 +48,20 @@ export function TodayMenuWidget() {
     load()
   }, [])
 
+  const handleRefreshMenu = async (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation()
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await regenerateMenuToday()
+      setMenu(data)
+    } catch {
+      setError('Не удалось обновить меню')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const dateLabel = useMemo(() => {
     if (!menu?.date) return ''
     try {
@@ -64,7 +80,19 @@ export function TodayMenuWidget() {
       >
         <div className="flex items-center justify-between mb-1">
           <h3 className="font-medium text-gray-900">Меню на сегодня</h3>
-          <span className="text-sm text-gray-500">{dateLabel}</span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleRefreshMenu}
+              disabled={loading}
+              className="h-7 px-2 py-1"
+              title="Обновить меню"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </Button>
+            <span className="text-sm text-gray-500">{dateLabel}</span>
+          </div>
         </div>
 
         {loading && <div className="text-sm text-gray-500">Загрузка...</div>}
