@@ -107,11 +107,11 @@ export function TodayMenuWidget() {
               size="sm"
               onClick={handleRefreshMenu}
               disabled={loading}
-              className="min-w-[96px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center"
+              className="min-w-[88px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center gap-1"
               style={titleHeight ? { height: `${titleHeight}px` } : undefined}
               title="Обновить меню"
             >
-              <RefreshCw className="w-4 h-4 mr-1.5" />Обновить
+              <RefreshCw className="w-4 h-4 mr-1" /><span class="text-xs">Обновить<\/span>
             </Button>
             <span className="text-sm text-gray-500">{dateLabel}</span>
           </div>
@@ -169,6 +169,7 @@ export function TodayMenuWidget() {
     </>
   )
 }
+
 
 
 
