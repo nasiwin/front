@@ -1,19 +1,33 @@
 # Repository Guidelines
 
+This frontend is a Vite + React + TypeScript app. Core UI lives in `src/components`, shared tokens in `src/styles`, and global styles in `src/index.css`. Entry points are `src/main.tsx` and `src/App.tsx`. Build output goes to `dist/`; design exports stay in `build/`.
+
 ## Project Structure & Module Organization
-The app is a Vite + React + TypeScript frontend. Core screens live under `src/components`, with shared styles in `src/styles` and global styles in `src/index.css`. Entry points are `src/main.tsx` and `src/App.tsx`; assets referenced in components are colocated next to their usage. Build artifacts land in `dist/`, while design exports stay in `build/`.
+- Source: `src/components` (screens/widgets), `src/styles` (tokens/theme), `src/api` (HTTP helpers).
+- Globals: `src/App.tsx`, `src/main.tsx`, `src/index.css`.
+- Assets: colocate with components; use kebab-case folders.
 
 ## Build, Test, and Development Commands
-Use `npm install` once to pull dependencies. `npm run dev` starts the Vite dev server with hot reload at `http://localhost:5173`. `npm run build` produces a production bundle in `dist/`. No automated test script is wired yet—add one before introducing tests to CI.
+- `npm install`: install dependencies.
+- `npm run dev`: start Vite with HMR at `http://localhost:5173`.
+- `npm run build`: create production bundle in `dist/`.
+- Tests: not wired yet; add Vitest before CI.
 
 ## Coding Style & Naming Conventions
-Write TypeScript with functional React components, preferring hooks. Keep files in PascalCase when exporting a component (e.g., `MealPlanner.tsx`) and kebab-case for asset folders. Indent with two spaces to match existing files. Run Prettier-compatible formatting (e.g., `npx prettier --write src`) before committing, and keep Tailwind utility groupings readable when used.
+- Stack: TypeScript + functional React; prefer hooks.
+- Files: PascalCase for components (`MealPlanner.tsx`); kebab-case for asset dirs.
+- Indentation: two spaces. Keep Tailwind utilities readable.
+- Formatting: run `npx prettier --write src` before committing.
 
 ## Testing Guidelines
-There is no test runner configured today. When adding tests, use Vitest + React Testing Library for component coverage and place specs alongside components as `<Component>.test.tsx`. Document manual verification steps in the pull request until automated coverage exists.
+- Frameworks: Vitest + React Testing Library.
+- Location: colocate specs as `Component.test.tsx` next to components.
+- Coverage: focus on core flows; document manual steps in PRs until CI runs tests.
 
 ## Commit & Pull Request Guidelines
-Recent history mixes English and Russian summaries; moving forward, keep commit subjects short, present-tense, and descriptive (e.g., `feat(home): add subscription card`). Group related changes per commit. Pull requests should include: goal summary, bullet list of key changes, screenshots or GIFs for UI work, and links to tracked issues or design references.
+- Commits: short, present-tense subjects (e.g., `feat(home): add subscription card`). Group related changes.
+- PRs: include goal summary, bullet list of key changes, screenshots/GIFs for UI, and links to issues/designs.
 
-## Design Assets & Theming
-UI tokens and color choices mirror the DietScan Figma file. When updating visuals, sync assets in `build/` and update Radix-based components to keep light/dark theming consistent. Document any new tokens in `src/styles` so other contributors can reuse them.
+## Design & Theming
+- Align tokens/colors with DietScan Figma. When visuals change, sync `build/` assets and update Radix-based components for consistent light/dark theming. Document new tokens in `src/styles` for reuse.
+
