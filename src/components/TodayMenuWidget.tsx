@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import { Card } from "./ui/card"
 import { useEffect, useMemo, useState } from "react"
 import { Button } from "./ui/button"
@@ -15,10 +15,10 @@ const categoryColors = {
 
 // Localized category labels
 const categoryLabels: Record<string, string> = {
-  protein: "белки",
-  fat: "жиры",
-  carb: "углеводы",
-  fiber: "клетчатка",
+  protein: "Р±РµР»РєРё",
+  fat: "Р¶РёСЂС‹",
+  carb: "СѓРіР»РµРІРѕРґС‹",
+  fiber: "РєР»РµС‚С‡Р°С‚РєР°",
 }
 
 // Text color classes for categories
@@ -40,7 +40,7 @@ export function TodayMenuWidget() {
     setError(null)
     fetchMenuToday()
       .then(setMenu)
-      .catch((e) => setError(e.message || 'Ошибка загрузки меню'))
+      .catch((e) => setError(e.message || 'РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё РјРµРЅСЋ'))
       .finally(() => setLoading(false))
   }
 
@@ -56,7 +56,7 @@ export function TodayMenuWidget() {
       const data = await regenerateMenuToday()
       setMenu(data)
     } catch {
-      setError('Не удалось обновить меню')
+      setError('РќРµ СѓРґР°Р»РѕСЃСЊ РѕР±РЅРѕРІРёС‚СЊ РјРµРЅСЋ')
     } finally {
       setLoading(false)
     }
@@ -79,14 +79,14 @@ export function TodayMenuWidget() {
         onClick={() => setShowMenuDetail(true)}
       >
         <div className="flex items-center justify-between mb-1">
-          <h3 className="font-medium text-gray-900">Меню на сегодня</h3>
+          <h3 className="font-medium text-gray-900">РњРµРЅСЋ РЅР° СЃРµРіРѕРґРЅСЏ</h3>
           <div className="flex items-center gap-2">
             <Button
               size="sm"
               onClick={handleRefreshMenu}
               disabled={loading}
               className="min-w-[112px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center"
-              title="�������� ����"
+              title="Обновить меню"
             >
               <RefreshCw className="w-4 h-4" />
             </Button>
@@ -94,7 +94,7 @@ export function TodayMenuWidget() {
           </div>
         </div>
 
-        {loading && <div className="text-sm text-gray-500">Загрузка...</div>}
+        {loading && <div className="text-sm text-gray-500">Р—Р°РіСЂСѓР·РєР°...</div>}
         {error && <div className="text-sm text-red-600">{error}</div>}
 
         {!loading && !error && (
@@ -122,10 +122,10 @@ export function TodayMenuWidget() {
                   </div>
                   <div className="mt-auto">
                     <div className="grid grid-cols-2 gap-1 text-xs mt-1">
-                      <span className="text-blue-600 font-medium">Б: {(item.macrosPerServing.protein * item.servings).toFixed(1)}г</span>
-                      <span className="text-orange-600 font-medium">Ж: {(item.macrosPerServing.fat * item.servings).toFixed(1)}г</span>
-                      <span className="text-green-600 font-medium">У: {(item.macrosPerServing.carbs * item.servings).toFixed(1)}г</span>
-                      <span className="text-purple-600 font-medium">К: {((item.macrosPerServing.fiber || 0) * item.servings).toFixed(1)}г</span>
+                      <span className="text-blue-600 font-medium">Р‘: {(item.macrosPerServing.protein * item.servings).toFixed(1)}Рі</span>
+                      <span className="text-orange-600 font-medium">Р–: {(item.macrosPerServing.fat * item.servings).toFixed(1)}Рі</span>
+                      <span className="text-green-600 font-medium">РЈ: {(item.macrosPerServing.carbs * item.servings).toFixed(1)}Рі</span>
+                      <span className="text-purple-600 font-medium">Рљ: {((item.macrosPerServing.fiber || 0) * item.servings).toFixed(1)}Рі</span>
                     </div>
                   </div>
                 </div>
@@ -140,10 +140,11 @@ export function TodayMenuWidget() {
         open={showMenuDetail}
         onOpenChange={(open) => {
           setShowMenuDetail(open)
-          if (!open) load() // при закрытии модалки — обновляем меню (на случай регенерации внутри)
+          if (!open) load() // РїСЂРё Р·Р°РєСЂС‹С‚РёРё РјРѕРґР°Р»РєРё вЂ” РѕР±РЅРѕРІР»СЏРµРј РјРµРЅСЋ (РЅР° СЃР»СѓС‡Р°Р№ СЂРµРіРµРЅРµСЂР°С†РёРё РІРЅСѓС‚СЂРё)
         }}
       />
     </>
   )
 }
+
 
