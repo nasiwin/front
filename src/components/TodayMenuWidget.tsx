@@ -85,8 +85,8 @@ export function TodayMenuWidget() {
               size="sm"
               onClick={handleRefreshMenu}
               disabled={loading}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-              title="ÐžÐ±Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ Ð¼ÐµÐ½ÑŽ"
+              className="min-w-[112px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center"
+              title="Îáíîâèòü ìåíþ"
             >
               <RefreshCw className="w-4 h-4" />
             </Button>
@@ -146,3 +146,4 @@ export function TodayMenuWidget() {
     </>
   )
 }
+
