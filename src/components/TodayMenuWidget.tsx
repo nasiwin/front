@@ -62,7 +62,7 @@ export function TodayMenuWidget() {
         className="p-4 bg-white/80 backdrop-blur-sm border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
         onClick={() => setShowMenuDetail(true)}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-1">
           <h3 className="font-medium text-gray-900">Меню на сегодня</h3>
           <span className="text-sm text-gray-500">{dateLabel}</span>
         </div>
@@ -71,7 +71,11 @@ export function TodayMenuWidget() {
         {error && <div className="text-sm text-red-600">{error}</div>}
 
         {!loading && !error && (
-          <div className="grid grid-cols-2 gap-2">
+          <>
+            {menu?.disclaimer && (
+              <p className="text-xs text-gray-500 my-0">{menu.disclaimer}</p>
+            )}
+            <div className="grid grid-cols-2 gap-2 mt-[-0.25rem]">
             {menu?.items.map((item, idx) => (
               <div
                 key={`${item.dishId}-${idx}`}
@@ -101,6 +105,7 @@ export function TodayMenuWidget() {
               </div>
             ))}
           </div>
+          </>
         )}
       </Card>
 
