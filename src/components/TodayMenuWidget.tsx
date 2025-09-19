@@ -85,7 +85,7 @@ export function TodayMenuWidget() {
               size="sm"
               onClick={handleRefreshMenu}
               disabled={loading}
-              className="min-w-[112px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center"
+              className="min-w-[96px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full justify-center"
               title="Обновить меню"
             >
               <RefreshCw className="w-4 h-4 mr-1.5" />Обновить
@@ -146,6 +146,7 @@ export function TodayMenuWidget() {
     </>
   )
 }
+
 
 
 
